@@ -65,6 +65,16 @@ export const RuleGroup: React.FC<Props> = ({ group, onChange }) => {
     onChange({ ...group, filters: updatedFilters });
   };
 
+  const handleDeleteFilter = (id: string) => {
+    const updatedFilters = group.filters.filter((f) => f.id !== id);
+    onChange({ ...group, filters: updatedFilters });
+  };
+
+  const handleDeleteGroup = (id: string) => {
+    const updatedGroups = group.groups.filter((g) => g.id !== id);
+    onChange({ ...group, groups: updatedGroups });
+  };
+
   return (
     <>
       <div
@@ -121,12 +131,14 @@ export const RuleGroup: React.FC<Props> = ({ group, onChange }) => {
                   filter={filter}
                   editable={!isLocked && !isDisabled}
                   onChange={handleFilterChange}
+                  onDelete={() => handleDeleteFilter(filter.id)}
+                  showDeleteButton={!isLocked}
                 />
               ))}
 
               {group.groups.map((subgroup) => (
+              <div key={subgroup.id} className="relative">
                 <RuleGroup
-                  key={subgroup.id}
                   group={subgroup}
                   onChange={(updated) => {
                     const updatedGroups = group.groups.map((g) =>
@@ -135,6 +147,16 @@ export const RuleGroup: React.FC<Props> = ({ group, onChange }) => {
                     onChange({ ...group, groups: updatedGroups });
                   }}
                 />
+                  {!isLocked && (
+                  <button
+                      onClick={() => handleDeleteGroup(subgroup.id)}
+                      className="absolute top-0 right-0 text-red-600 hover:text-red-800"
+                      title="Delete subgroup"
+                  >
+                      ❌
+                  </button>
+                  )}
+              </div>
               ))}
             </div>
 
