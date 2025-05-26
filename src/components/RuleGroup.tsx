@@ -12,10 +12,11 @@ interface Props {
 export const RuleGroup: React.FC<Props> = ({ group, onChange }) => {
   const [isEditingName, setIsEditingName] = useState(false);
 
-  const borderColor = group.logic === 'AND' ? 'border-blue-500' : 'border-green-500';
   const isLocked = group.isLocked;
   const isDisabled = group.isDisabled;
   const isHidden = group.isHidden;
+
+  const borderColor = group.logic === 'AND' ? 'border-blue-500' : 'border-green-500';
 
   const handleAddFilter = () => {
     if (isLocked) return;
@@ -56,6 +57,13 @@ export const RuleGroup: React.FC<Props> = ({ group, onChange }) => {
   const toggleLock = () => onChange({ ...group, isLocked: !group.isLocked });
   const toggleDisable = () => onChange({ ...group, isDisabled: !group.isDisabled });
   const toggleHidden = () => onChange({ ...group, isHidden: !group.isHidden });
+
+  const handleFilterChange = (updatedFilter: Filter) => {
+    const updatedFilters = group.filters.map((f) =>
+      f.id === updatedFilter.id ? updatedFilter : f
+    );
+    onChange({ ...group, filters: updatedFilters });
+  };
 
   return (
     <>
@@ -111,7 +119,8 @@ export const RuleGroup: React.FC<Props> = ({ group, onChange }) => {
                 <FilterItem
                   key={filter.id}
                   filter={filter}
-                  // placeholder for future props: isEditable={!isLocked && !isDisabled}
+                  editable={!isLocked && !isDisabled}
+                  onChange={handleFilterChange}
                 />
               ))}
 
